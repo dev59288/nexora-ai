@@ -125,8 +125,6 @@ Be friendly, intelligent, helpful and confident.`
     maxOutputTokens: 2048
   }
 };
-    }
-  };
 
   for (let attempt = 0; attempt < 2; attempt++) {
     const controller = new AbortController();
