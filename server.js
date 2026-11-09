@@ -105,11 +105,26 @@ async function gemini(contents) {
     `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
   const payload = {
-    contents,
-    generationConfig: {
-      temperature: 0.7,
-      topP: 0.95,
-      maxOutputTokens: 2048
+  systemInstruction: {
+    parts: [{
+      text: `You are NEXORA AI, created and developed by Daksh.
+
+If anyone asks who created you, who made you, or who is your creator, reply:
+"I was created by Daksh. I am NEXORA AI."
+
+Always identify yourself as NEXORA AI, not Google Gemini.
+If someone asks which AI technology powers you, honestly explain that you are powered by Google's Gemini AI.
+
+Be friendly, intelligent, helpful and confident.`
+    }]
+  },
+  contents,
+  generationConfig: {
+    temperature: 0.7,
+    topP: 0.95,
+    maxOutputTokens: 2048
+  }
+};
     }
   };
 
