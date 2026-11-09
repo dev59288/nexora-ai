@@ -163,61 +163,69 @@
   <footer><div class="wrap foot"><span>© <span id="year"></span> NEXORA AI. All rights reserved.</span><span>Built for curious minds&nbsp; ✦</span></div></footer>
 
   <script>
-    (() => {
-      const form = document.getElementById('chatForm');
-      const input = document.getElementById('chatInput');
-      const send = document.getElementById('sendButton');
-      const messagesEl = document.getElementById('messages');
-      const suggestions = document.getElementById('suggestions');
-      const menu = document.getElementById('menu');
-      const links = document.getElementById('links');
-      const history = [];
-      let busy = false;
+  document.addEventListener('DOMContentLoaded', () => {
+    const $ = (id) => document.getElementById(id);
+    const form = $('chatForm');
+    const input = $('chatInput');
+    const send = $('sendButton');
+    const messages = $('messages');
+    const suggestions = $('suggestions');
+    const year = $('year');
+    const menu = $('menu');
+    const links = $('links');
+    const history = [];
+    let busy = false;
 
-      document.getElementById('year').textContent = new Date().getFullYear();
-      if (menu && links) {
-        menu.addEventListener('click', () => links.classList.toggle('open'));
-        links.querySelectorAll('a').forEach(link => link.addEventListener('click', () => links.classList.remove('open')));
+    if (year) year.textContent = new Date().getFullYear();
+    if (menu && links) {
+      menu.addEventListener('click', () => links.classList.toggle('open'));
+      links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+    }
+
+    function addMessage(text, role, error = false) {
+      const bubble = document.createElement('div');
+      bubble.className = `msg ${role}${error ? ' error' : ''}`;
+      bubble.textContent = String(text);
+      messages.appendChild(bubble);
+      messages.scrollTop = messages.scrollHeight;
+      return bubble;
+    }
+
+    async function sendMessage(raw) {
+      const text = String(raw || '').trim();
+      if (!text || busy) return;
+      if (!form || !input || !send || !messages) return;
+      busy = true;
+      send.disabled = true;
+      input.disabled = true;
+      addMessage(text, 'user');
+      input.value = '';
+      history.push({ role: 'user', text });
+      const typing = addMessage('NEXORA is thinking…', 'ai');
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.message || `Server error (${response.status})`);
+        if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('Server se reply nahi aaya. Thodi der baad try karo.');
+        history.push({ role: 'assistant', text: data.reply });
+        typing.remove();
+        addMessage(data.reply, 'ai');
+      } catch (err) {
+        typing.remove();
+        addMessage(err.message || 'NEXORA server se connect nahi ho paya. Internet check karke dobara try karo.', 'ai', true);
+        history.pop();
+      } finally {
+        busy = false;
+        send.disabled = false;
+        input.disabled = false;
+        input.focus();
       }
+    }
 
-      function addMessage(text, role, isError = false) {
-        const node = document.createElement('div');
-        node.className = `msg ${role}${isError ? ' error' : ''}`;
-        node.textContent = text;
-        messagesEl.appendChild(node);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-        return node;
-      }
-
-      function showTyping() {
-        const node = document.createElement('div');
-        node.className = 'msg ai';
-        node.textContent = 'NEXORA is thinking…';
-        messagesEl.appendChild(node);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-        return node;
-      }
-
-      async function sendMessage(raw) {
-        const text = String(raw || '').trim();
-        if (!text || busy) return;
-        busy = true;
-        send.disabled = true;
-        input.disabled = true;
-        addMessage(text, 'user');
-        input.value = '';
-        history.push({ role: 'user', text });
-        const typing = showTyping();
-        try {
-          const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: history })
-          });
-          const data = await response.json().catch(() => ({}));
-          if (!response.ok) throw new Error(data.message || `Server error (${response.status}). Please try again.`);
-          if (!data.reply || typeof data.reply !== 'string') throw new Error('The AI server returned an empty reply. Please try again.');
-          history.push({ role: 'assistant', text: data.reply });
-          addMessage(data.reply, 'ai');
-        } catch (error) {
-          addMessage(error.message || 'Could not reach NEXORA. Please try again
+    if (form) form.addEventListener('submit', event => {
+      event.preventDefault();
+      sendMess
