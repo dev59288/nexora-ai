@@ -60,25 +60,25 @@
     .card:hover{transform:translateY(-5px);border-color:#d5ad6066;box-shadow:0 18px 45px #0005}
     .ico{width:43px;height:43px;border-radius:13px;border:1px solid #d5ad6044;background:#d5ad6010;color:var(--gold2);display:grid;place-items:center;font-size:21px;margin-bottom:22px}
     .card h3{margin:0 0 8px;font-size:17px}.card p{margin:0;color:#a9a395;font-size:13px;line-height:1.75}
-    .lab{border:1px solid #d5ad6040;border-radius:24px;background:linear-gradient(145deg,#17150f,#0b0b09);padding:32px;max-width:1080px;margin:auto;box-shadow:0 25px 90px #0008,0 0 35px #d5ad600c}
+    .lab{border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,#15130e,#0b0b09);padding:28px;max-width:850px;margin:auto;box-shadow:0 25px 80px #0007}
     .labtop{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:20px}
     .labname{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:.12em;font-size:12px}
     .status{font-size:10px;color:#b9d99c;letter-spacing:.12em;text-transform:uppercase}
     .status:before{content:"";display:inline-block;width:6px;height:6px;background:#8fbd69;border-radius:50%;margin:0 7px 1px 0;box-shadow:0 0 9px #8fbd69}
-    .messages{height:460px;min-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:17px;padding:12px 8px 22px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#8d6a32 #100f0c}
-    .msg{max-width:88%;padding:17px 21px;border-radius:16px;font-size:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 8px 24px #0003}
-    .msg.ai{align-self:flex-start;background:linear-gradient(135deg,#1d1a13,#14120e);border:1px solid #d5ad6033;color:#f0e7d5;border-top-left-radius:5px}
-    .msg.user{align-self:flex-end;background:linear-gradient(135deg,#f0d49a,#c3984e);color:#17130a;border-top-right-radius:5px}
+    .messages{height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:13px;padding:5px 3px 18px;scroll-behavior:smooth}
+    .msg{max-width:85%;padding:13px 16px;border-radius:14px;font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+    .msg.ai{align-self:flex-start;background:#1a1812;border:1px solid #d5ad6022;color:#e7dfce;border-top-left-radius:4px}
+    .msg.user{align-self:flex-end;background:linear-gradient(135deg,#d9b66e,#ad8138);color:#17130a;border-top-right-radius:4px}
     .msg.error{border-color:#a95445;color:#f0b4a8}
     .dots{display:inline-flex;gap:4px;align-items:center;height:16px}.dots i{width:5px;height:5px;border-radius:50%;background:var(--gold2);animation:dot 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
     @keyframes dot{50%{opacity:.25;transform:translateY(-3px)}}
     .suggestions{display:flex;gap:8px;flex-wrap:wrap;margin:5px 0 16px}
     .suggestions button{border:1px solid var(--line);background:#d5ad6008;color:#cfc3a8;border-radius:99px;padding:8px 12px;font-size:11px;cursor:pointer}
     .suggestions button:hover{border-color:var(--gold);color:var(--gold2)}
-    .chatform{display:flex;gap:10px;border:1px solid #d5ad6070;background:linear-gradient(135deg,#0c0b09,#11100d);border-radius:16px;padding:9px;box-shadow:0 0 0 3px #d5ad6008,0 12px 30px #0005}
-    .chatform input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:13px 14px;font-size:16px}
-    .chatform input::placeholder{color:#918878}.chatform:focus-within{border-color:#e0bd78;box-shadow:0 0 0 3px #d5ad6018,0 12px 30px #0006}
-    .send{border:0;border-radius:11px;padding:0 24px;background:linear-gradient(135deg,#f4dda9,#b98a3b);color:#17130a;font-weight:850;cursor:pointer;box-shadow:0 5px 18px #d5ad6030;transition:transform .2s,filter .2s}.send:hover{transform:translateY(-1px);filter:brightness(1.08)}
+    .chatform{display:flex;gap:10px;border:1px solid #d5ad6048;background:#090908;border-radius:14px;padding:7px}
+    .chatform input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:10px 12px;font-size:14px}
+    .chatform input::placeholder{color:#777267}
+    .send{border:0;border-radius:10px;padding:0 20px;background:linear-gradient(135deg,#f0d49a,#b98a3b);color:#17130a;font-weight:800;cursor:pointer}
     .send:disabled{opacity:.55;cursor:not-allowed}
     .hint{text-align:center;color:#706b60;font-size:10px;margin-top:12px}
     .about{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}
@@ -88,7 +88,7 @@
     footer{border-top:1px solid var(--line);padding:28px 0;color:#817b70;font-size:11px}
     .foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
     @media(max-width:820px){.wrap{width:min(100% - 30px,620px)}.navin{height:66px}.menu{display:block}.links{display:none;position:absolute;top:66px;left:0;right:0;background:#0d0c09;border-bottom:1px solid var(--line);padding:18px 25px;flex-direction:column;align-items:flex-start;gap:18px}.links.open{display:flex}.navcta{display:none}.hero{grid-template-columns:1fr;text-align:center;padding:65px 0 40px;min-height:0}.hero .lead{margin:auto}.heroactions{justify-content:center}.visual{height:370px;grid-row:1}.core{width:170px;height:170px}.visual:before{width:280px;height:280px}.visual:after{width:330px;height:330px}.orbit{width:250px}.orbit.two{width:290px}.floatlabel.one{left:3%;top:12%}.floatlabel.two{right:2%;bottom:12%}.grid{grid-template-columns:1fr 1fr}.section{padding:68px 0}.about{grid-template-columns:1fr}}
-    @media(max-width:520px){.grid{grid-template-columns:1fr}.messages{height:55vh;min-height:330px}.msg{max-width:96%;font-size:15px;padding:14px 15px}.lab{padding:15px}.visual{height:320px}.visual:before{width:240px;height:240px}.visual:after{width:285px;height:285px}.core{width:145px;height:145px}.orbit{width:210px;height:80px}.orbit.two{width:250px;height:95px}.floatlabel{font-size:9px;padding:8px 10px}.lab{padding:15px 12px;border-radius:18px}.messages{height:54vh;min-height:320px;max-height:560px;gap:14px;padding:9px 3px 18px}.msg{max-width:94%;font-size:15px;line-height:1.75;padding:14px 15px}.chatform{gap:6px;padding:6px}.chatform input{font-size:15px;padding:11px 9px}.send{padding:0 15px}.suggestions{gap:6px}.suggestions button{font-size:10px;padding:7px 10px}.statrow{gap:7px}}
+    @media(max-width:520px){.grid{grid-template-columns:1fr}.visual{height:320px}.visual:before{width:240px;height:240px}.visual:after{width:285px;height:285px}.core{width:145px;height:145px}.orbit{width:210px;height:80px}.orbit.two{width:250px;height:95px}.floatlabel{font-size:9px;padding:8px 10px}.lab{padding:16px}.messages{height:245px}.send{padding:0 14px}.statrow{gap:7px}}
     @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
   </style>
 </head>
@@ -163,69 +163,93 @@
   <footer><div class="wrap foot"><span>© <span id="year"></span> NEXORA AI. All rights reserved.</span><span>Built for curious minds&nbsp; ✦</span></div></footer>
 
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const $ = (id) => document.getElementById(id);
-    const form = $('chatForm');
-    const input = $('chatInput');
-    const send = $('sendButton');
-    const messages = $('messages');
-    const suggestions = $('suggestions');
-    const year = $('year');
-    const menu = $('menu');
-    const links = $('links');
-    const history = [];
-    let busy = false;
+    (() => {
+      const $ = (selector) => document.querySelector(selector);
+      const form = $('#chatForm');
+      const input = $('#chatInput');
+      const send = $('#sendButton');
+      const messagesEl = $('#messages');
+      const suggestions = $('#suggestions');
+      const menu = $('#menu');
+      const links = $('#links');
+      let history = [];
+      let busy = false;
 
-    if (year) year.textContent = new Date().getFullYear();
-    if (menu && links) {
+      $('#year').textContent = new Date().getFullYear();
+
       menu.addEventListener('click', () => links.classList.toggle('open'));
-      links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
-    }
+      links.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => links.classList.remove('open'));
+      });
 
-    function addMessage(text, role, error = false) {
-      const bubble = document.createElement('div');
-      bubble.className = `msg ${role}${error ? ' error' : ''}`;
-      bubble.textContent = String(text);
-      messages.appendChild(bubble);
-      messages.scrollTop = messages.scrollHeight;
-      return bubble;
-    }
-
-    async function sendMessage(raw) {
-      const text = String(raw || '').trim();
-      if (!text || busy) return;
-      if (!form || !input || !send || !messages) return;
-      busy = true;
-      send.disabled = true;
-      input.disabled = true;
-      addMessage(text, 'user');
-      input.value = '';
-      history.push({ role: 'user', text });
-      const typing = addMessage('NEXORA is thinking…', 'ai');
-      try {
-        const response = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: history })
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.message || `Server error (${response.status})`);
-        if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('Server se reply nahi aaya. Thodi der baad try karo.');
-        history.push({ role: 'assistant', text: data.reply });
-        typing.remove();
-        addMessage(data.reply, 'ai');
-      } catch (err) {
-        typing.remove();
-        addMessage(err.message || 'NEXORA server se connect nahi ho paya. Internet check karke dobara try karo.', 'ai', true);
-        history.pop();
-      } finally {
-        busy = false;
-        send.disabled = false;
-        input.disabled = false;
-        input.focus();
+      function addMessage(text, role, isError = false) {
+        const node = document.createElement('div');
+        node.className = `msg ${role}${isError ? ' error' : ''}`;
+        node.textContent = text;
+        messagesEl.appendChild(node);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return node;
       }
-    }
 
-    if (form) form.addEventListener('submit', event => {
-      event.preventDefault();
-      sendMess
+      function showTyping() {
+        const node = document.createElement('div');
+        node.className = 'msg ai';
+        node.innerHTML = '<span class="dots" aria-label="NEXORA is thinking"><i></i><i></i><i></i></span>';
+        messagesEl.appendChild(node);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return node;
+      }
+
+      async function sendMessage(raw) {
+        const text = raw.trim();
+        if (!text || busy) return;
+
+        busy = true;
+        send.disabled = true;
+        input.disabled = true;
+        addMessage(text, 'user');
+        input.value = '';
+        const typing = showTyping();
+
+        try {
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: [...history, { role: 'user', text }] })
+          });
+
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            throw new Error(data.message || `Server error (${response.status}). Please try again.`);
+          }
+          if (!data.reply || typeof data.reply !== 'string') {
+            throw new Error('The AI server returned an empty reply. Please try again.');
+          }
+
+          typing.remove();
+          addMessage(data.reply, 'ai');
+          history.push({ role: 'user', text }, { role: 'assistant', text: data.reply });
+        } catch (error) {
+          typing.remove();
+          addMessage(error.message || 'Could not reach NEXORA. Please try again.', 'ai', true);
+        } finally {
+          busy = false;
+          send.disabled = false;
+          input.disabled = false;
+          input.focus();
+        }
+      }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        sendMessage(input.value);
+      });
+
+      suggestions.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-prompt]');
+        if (button) sendMessage(button.dataset.prompt);
+      });
+    })();
+  </script>
+</body>
+</html>
