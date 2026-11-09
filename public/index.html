@@ -1,211 +1,237 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#07131c">
-<meta name="google-site-verification" content="lyFLgH8oRinuuzgBeyawQ8iHJuZjGnUW34wKhagwCcc">
-<title>NEXORA AI — Intelligence Interface</title>
-<style>
-:root{--bg:#06111a;--panel:#0a1b27;--panel2:#0d2431;--line:rgba(91,224,238,.22);--cyan:#62e8f4;--blue:#3aa8c8;--gold:#d8bd75;--text:#e9f8fb;--muted:#91aeb8;--danger:#ff8e8e;--shadow:0 18px 60px rgba(0,0,0,.38)}
-*{box-sizing:border-box}
-html{min-height:100%;scroll-behavior:smooth}
-body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 52% -18%,rgba(26,115,145,.24),transparent 48%),radial-gradient(ellipse at 100% 80%,rgba(24,94,115,.12),transparent 40%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.01em}
-button,textarea{font:inherit}
-button{cursor:pointer}
-.app{min-height:100vh;display:grid;grid-template-columns:260px minmax(0,1fr);max-width:1700px;margin:auto}
-.sidebar{border-right:1px solid var(--line);background:rgba(4,15,23,.78);padding:26px 18px;display:flex;flex-direction:column;gap:26px}
-.brand{display:flex;align-items:center;gap:12px;padding:4px 8px}
-.brand-mark{width:42px;height:42px;border:1px solid var(--cyan);border-radius:13px;display:grid;place-items:center;color:var(--cyan);font-weight:800;box-shadow:0 0 22px rgba(98,232,244,.18),inset 0 0 18px rgba(98,232,244,.1);font-size:20px}
-.brand-name{font-size:17px;font-weight:800;letter-spacing:.16em}.brand-sub{font-size:10px;color:var(--muted);letter-spacing:.22em;margin-top:3px}
-.side-label{font-size:10px;color:#6d929f;letter-spacing:.2em;padding:0 10px;text-transform:uppercase}
-.nav{display:grid;gap:8px}
-.nav button{width:100%;text-align:left;color:#a9c5ce;background:transparent;border:1px solid transparent;border-radius:12px;padding:13px 12px;display:flex;align-items:center;gap:12px;font-size:14px}
-.nav button.active,.nav button:hover{color:var(--cyan);background:rgba(61,176,198,.1);border-color:var(--line)}
-.nav-icon{width:22px;text-align:center;font-size:17px}
-.side-status{margin-top:auto;border:1px solid var(--line);border-radius:15px;padding:15px;background:linear-gradient(145deg,rgba(19,54,69,.6),rgba(8,24,34,.6))}
-.status-top{display:flex;align-items:center;gap:8px;font-size:12px;color:#cce8ed}
-.dot{width:8px;height:8px;border-radius:50%;background:#69f0c2;box-shadow:0 0 12px #69f0c2}
-.status-note{font-size:11px;line-height:1.6;color:var(--muted);margin-top:9px}
-.main{min-width:0;padding:22px clamp(16px,3vw,42px) 28px;display:flex;flex-direction:column;min-height:100vh}
-.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;border-bottom:1px solid var(--line);padding:2px 0 18px}
-.eyebrow{font-size:10px;color:var(--cyan);letter-spacing:.24em;text-transform:uppercase}
-.top-title{font-size:clamp(18px,2vw,24px);font-weight:700;margin-top:5px;letter-spacing:.04em}
-.top-right{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
-.pill{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(15,43,55,.65)}
-.mobile-menu{display:none;background:transparent;border:1px solid var(--line);border-radius:10px;color:var(--cyan);padding:9px 12px}
-.workspace{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:22px;flex:1;padding-top:22px;min-height:0}
-.chat-panel{min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:linear-gradient(160deg,rgba(10,29,41,.96),rgba(5,18,28,.96));box-shadow:var(--shadow);min-height:650px}
-.chat-head{padding:19px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;background:rgba(13,37,50,.55)}
-.chat-heading{font-size:16px;font-weight:700;letter-spacing:.06em}.chat-caption{font-size:12px;color:var(--muted);margin-top:5px}
-.connection{font-size:11px;color:#83e9d1;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.chat-scroll{flex:1;overflow-y:auto;padding:clamp(18px,3vw,34px);display:flex;flex-direction:column;gap:22px;min-height:340px;scroll-behavior:smooth}
-.welcome{margin:auto;text-align:center;max-width:620px;padding:24px 12px}
-.orb-wrap{width:150px;height:150px;margin:0 auto 22px;position:relative;display:grid;place-items:center}
-.orb{width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#d6ffff 0,#72eaf2 9%,#1388a8 34%,#082b42 65%,#04121d 78%);box-shadow:0 0 22px rgba(85,231,245,.7),0 0 70px rgba(46,179,210,.28),inset -12px -12px 25px rgba(0,0,0,.65);animation:pulse 3.4s ease-in-out infinite}
-.orbit{position:absolute;inset:8px;border:1px solid rgba(98,232,244,.48);border-radius:50%;transform:rotate(-24deg) scaleY(.42);animation:spin 12s linear infinite}
-.orbit.two{inset:0;border-color:rgba(216,189,117,.5);transform:rotate(55deg) scaleY(.55);animation:spin 17s linear infinite reverse}
-.orbit:after{content:"";position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold);top:14%;left:17%;box-shadow:0 0 12px var(--gold)}
-@keyframes spin{to{transform:rotate(336deg) scaleY(.42)}}@keyframes pulse{50%{transform:scale(1.07);filter:brightness(1.2)}}
-.welcome h1{font-size:clamp(25px,3vw,38px);letter-spacing:.1em;margin:0 0 12px}.welcome h1 span{color:var(--cyan)}
-.welcome p{font-size:15px;line-height:1.8;color:var(--muted);margin:0 auto 22px;max-width:540px}
-.suggestions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
-.suggestions button{border:1px solid var(--line);border-radius:999px;padding:10px 15px;color:#c6e8ee;background:rgba(24,65,80,.32);font-size:12px}
-.suggestions button:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(60,179,200,.12)}
-.message{max-width:min(88%,820px);display:flex;flex-direction:column;gap:7px;align-self:flex-start}
-.message.user{align-self:flex-end}
-.msg-meta{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.message.user .msg-meta{text-align:right;color:var(--gold)}
-.bubble{font-size:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;padding:17px 20px;border-radius:17px;border:1px solid var(--line);background:rgba(15,43,57,.78);color:#e4f4f7}
-.message.user .bubble{background:linear-gradient(135deg,rgba(37,91,105,.72),rgba(17,46,60,.92));border-color:rgba(216,189,117,.35)}
-.bubble.error{border-color:rgba(255,142,142,.45);color:#ffd0d0}
-.typing{color:var(--cyan);font-size:13px;letter-spacing:.08em;padding:8px 2px}
-.composer-wrap{border-top:1px solid var(--line);padding:17px 20px 20px;background:rgba(3,15,23,.7)}
-.composer{display:flex;align-items:flex-end;gap:12px;border:1px solid rgba(98,232,244,.35);background:#071923;border-radius:17px;padding:10px 11px 10px 17px;box-shadow:0 0 25px rgba(35,153,180,.08)}
-.composer:focus-within{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(98,232,244,.08)}
-#prompt{resize:none;flex:1;min-height:52px;max-height:180px;border:0;outline:0;background:transparent;color:var(--text);font-size:16px;line-height:1.6;padding:11px 0}
-#prompt::placeholder{color:#6f929d}
-.send{width:50px;height:50px;border:0;border-radius:13px;background:linear-gradient(135deg,#8af4f5,#3aa9c4);color:#03202b;font-size:20px;font-weight:900;box-shadow:0 0 22px rgba(98,232,244,.2)}
-.send:disabled{opacity:.45;cursor:not-allowed}
-.composer-note{text-align:center;color:#6f929d;font-size:10px;margin-top:10px;letter-spacing:.04em}
-.right-rail{display:flex;flex-direction:column;gap:16px}
-.hud-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:linear-gradient(150deg,rgba(13,39,52,.8),rgba(7,23,33,.85))}
-.card-label{font-size:10px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase}
-.hud-card h3{font-size:16px;margin:12px 0 8px}.hud-card p{font-size:12px;color:var(--muted);line-height:1.7;margin:0}
-.mini-radar{height:145px;display:grid;place-items:center;position:relative;overflow:hidden;margin-top:12px}
-.radar-circle{position:absolute;width:130px;height:130px;border:1px solid rgba(98,232,244,.25);border-radius:50%;background:repeating-radial-gradient(circle,transparent 0 19px,rgba(98,232,244,.14) 20px 21px)}
-.radar-circle:before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 78%,rgba(98,232,244,.24) 95%,transparent);animation:spin 5s linear infinite}
-.radar-center{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan);z-index:1}
-.metric{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid rgba(98,232,244,.1);font-size:12px;color:var(--muted)}
-.metric strong{color:#d8edf0;font-weight:600}
-.footer{padding:18px 2px 0;text-align:center;color:#587782;font-size:10px;letter-spacing:.16em}
-@media(max-width:1050px){.workspace{grid-template-columns:minmax(0,1fr)}.right-rail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.chat-panel{min-height:620px}}
-@media(max-width:700px){.app{display:block}.sidebar{display:none;position:fixed;z-index:10;inset:0 auto 0 0;width:270px;box-shadow:var(--shadow)}.sidebar.open{display:flex}.main{padding:14px 12px 20px;min-height:100vh}.mobile-menu{display:block}.topbar{padding-bottom:14px}.top-right .pill{display:none}.workspace{padding-top:14px}.chat-panel{min-height:calc(100vh - 115px);border-radius:17px}.chat-head{padding:15px}.chat-scroll{padding:18px 13px;gap:18px}.message{max-width:94%}.bubble{font-size:15px;line-height:1.75;padding:14px 15px}.welcome{padding:12px 2px}.orb-wrap{width:125px;height:125px}.orb{width:76px;height:76px}.welcome p{font-size:14px}.composer-wrap{padding:12px}.composer{gap:8px;padding-left:12px}#prompt{font-size:15px;min-height:48px}.send{width:46px;height:46px}.right-rail{grid-template-columns:1fr}.footer{font-size:9px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080807">
+  <meta name="description" content="NEXORA AI — a smarter space for ideas, answers and creativity.">
+  <meta name="google-site-verification" content="lyFLgH8oRinuuzgBeyawQ8iHJuZjGnUW34wKhagwCcc">
+  <title>NEXORA AI — Intelligence, Reimagined</title>
+  <style>
+    :root{--bg:#080807;--panel:#11110f;--panel2:#171611;--gold:#d5ad60;--gold2:#f0d49a;--muted:#aaa69a;--line:rgba(213,173,96,.18);--white:#f7f3e9}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:85px}
+    body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;overflow-x:hidden}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 75% 8%,rgba(180,132,49,.12),transparent 34%),radial-gradient(ellipse at 8% 48%,rgba(180,132,49,.06),transparent 30%),linear-gradient(120deg,#080807,#0b0a08 55%,#080807)}
+    a{color:inherit;text-decoration:none}
+    button,input{font:inherit}
+    .wrap{width:min(1160px,calc(100% - 40px));margin:auto}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(8,8,7,.82);backdrop-filter:blur(16px);border-bottom:1px solid rgba(213,173,96,.12)}
+    .navin{height:76px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.17em;font-size:15px}
+    .brandmark{width:31px;height:31px;border:1px solid var(--gold);border-radius:10px;display:grid;place-items:center;color:var(--gold2);font-size:17px;box-shadow:0 0 22px #d5ad6022}
+    .links{display:flex;gap:30px;align-items:center;color:#c9c2b3;font-size:13px}
+    .links a:hover{color:var(--gold2)}
+    .navcta,.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid var(--gold);border-radius:999px;padding:11px 19px;color:#17130a;background:linear-gradient(135deg,#f0d49a,#b98a3b);font-weight:750;font-size:13px;cursor:pointer;transition:.25s}
+    .navcta:hover,.btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px #d5ad6033}
+    .menu{display:none;background:none;border:1px solid var(--line);color:var(--gold2);border-radius:9px;padding:8px 11px}
+    .hero{min-height:650px;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:25px;padding:76px 0 70px;position:relative}
+    .eyebrow{display:inline-flex;align-items:center;gap:9px;color:var(--gold2);border:1px solid var(--line);background:#d5ad600d;padding:7px 12px;border-radius:99px;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+    .pulse{width:7px;height:7px;border-radius:50%;background:#e8c77e;box-shadow:0 0 12px #e8c77e;animation:pulse 1.8s infinite}
+    @keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+    h1{font-size:clamp(45px,6.5vw,78px);line-height:1.02;letter-spacing:-.055em;margin:24px 0 20px;font-weight:800}
+    h1 span{background:linear-gradient(100deg,#fff1ce 5%,#d5ad60 48%,#fff0c9 90%);background-clip:text;-webkit-background-clip:text;color:transparent}
+    .lead{max-width:550px;color:#b8b2a5;font-size:17px;line-height:1.8}
+    .heroactions{display:flex;gap:13px;align-items:center;flex-wrap:wrap;margin-top:30px}
+    .btn.secondary{background:transparent;color:var(--gold2);border-color:var(--line)}
+    .micro{margin-top:24px;color:#777267;font-size:11px;letter-spacing:.08em}
+    .visual{height:490px;position:relative;display:grid;place-items:center;isolation:isolate}
+    .visual:before,.visual:after{content:"";position:absolute;border:1px solid #d5ad6029;border-radius:50%;width:360px;height:360px;animation:orbit 24s linear infinite}
+    .visual:after{width:440px;height:440px;border-style:dashed;opacity:.5;animation-direction:reverse;animation-duration:38s}
+    @keyframes orbit{to{transform:rotate(360deg)}}
+    .core{width:220px;height:220px;border-radius:50%;position:relative;background:radial-gradient(circle at 34% 27%,#fff0c9 0,#d9b56c 4%,#886329 14%,#19150d 37%,#050505 67%);box-shadow:inset -20px -25px 45px #000, inset 10px 8px 28px #f8d99566,0 0 45px #d5ad604d,0 0 110px #d5ad6020;animation:float 5s ease-in-out infinite}
+    .core:before{content:"";position:absolute;inset:-24px;border:2px solid #d5ad6077;border-radius:50%;transform:rotateX(68deg) rotate(-24deg);box-shadow:0 0 25px #d5ad6033}
+    .core:after{content:"";position:absolute;inset:15px;border-radius:50%;border:1px solid #f3d99a55;box-shadow:inset 0 0 28px #d5ad6033}
+    @keyframes float{50%{transform:translateY(-13px) scale(1.025)}}
+    .orbit{position:absolute;width:320px;height:110px;border:1px solid #d5ad6080;border-radius:50%;transform:rotate(-28deg);animation:orbit 14s linear infinite}
+    .orbit.two{width:390px;height:145px;transform:rotate(42deg);animation-duration:19s;animation-direction:reverse}
+    .spark{position:absolute;width:5px;height:5px;border-radius:50%;background:#f2d797;box-shadow:0 0 15px 4px #d5ad6077}
+    .spark.a{top:18%;right:19%}.spark.b{bottom:17%;left:18%;width:3px;height:3px}
+    .floatlabel{position:absolute;border:1px solid var(--line);background:#11100de8;backdrop-filter:blur(12px);padding:10px 14px;border-radius:12px;color:#d9c99f;font-size:11px;letter-spacing:.1em;box-shadow:0 10px 35px #0008}
+    .floatlabel.one{top:17%;left:1%}.floatlabel.two{right:0;bottom:18%}
+    .section{padding:90px 0}
+    .sectionhead{text-align:center;max-width:680px;margin:0 auto 42px}
+    .kicker{color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:.22em;font-weight:750}
+    h2{font-size:clamp(30px,4vw,45px);line-height:1.15;letter-spacing:-.035em;margin:12px 0}
+    .sub{color:var(--muted);font-size:15px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{padding:26px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#17150fbb,#0d0d0be8);min-height:205px;transition:.25s;position:relative;overflow:hidden}
+    .card:before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:#d5ad600c;filter:blur(25px);right:-80px;top:-90px}
+    .card:hover{transform:translateY(-5px);border-color:#d5ad6066;box-shadow:0 18px 45px #0005}
+    .ico{width:43px;height:43px;border-radius:13px;border:1px solid #d5ad6044;background:#d5ad6010;color:var(--gold2);display:grid;place-items:center;font-size:21px;margin-bottom:22px}
+    .card h3{margin:0 0 8px;font-size:17px}.card p{margin:0;color:#a9a395;font-size:13px;line-height:1.75}
+    .lab{border:1px solid #d5ad6040;border-radius:24px;background:linear-gradient(145deg,#17150f,#0b0b09);padding:32px;max-width:1080px;margin:auto;box-shadow:0 25px 90px #0008,0 0 35px #d5ad600c}
+    .labtop{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:17px;margin-bottom:20px}
+    .labname{display:flex;align-items:center;gap:10px;font-weight:750;letter-spacing:.12em;font-size:12px}
+    .status{font-size:10px;color:#b9d99c;letter-spacing:.12em;text-transform:uppercase}
+    .status:before{content:"";display:inline-block;width:6px;height:6px;background:#8fbd69;border-radius:50%;margin:0 7px 1px 0;box-shadow:0 0 9px #8fbd69}
+    .messages{height:460px;min-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:17px;padding:12px 8px 22px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#8d6a32 #100f0c}
+    .msg{max-width:88%;padding:17px 21px;border-radius:16px;font-size:16px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere;box-shadow:0 8px 24px #0003}
+    .msg.ai{align-self:flex-start;background:linear-gradient(135deg,#1d1a13,#14120e);border:1px solid #d5ad6033;color:#f0e7d5;border-top-left-radius:5px}
+    .msg.user{align-self:flex-end;background:linear-gradient(135deg,#f0d49a,#c3984e);color:#17130a;border-top-right-radius:5px}
+    .msg.error{border-color:#a95445;color:#f0b4a8}
+    .dots{display:inline-flex;gap:4px;align-items:center;height:16px}.dots i{width:5px;height:5px;border-radius:50%;background:var(--gold2);animation:dot 1s infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+    @keyframes dot{50%{opacity:.25;transform:translateY(-3px)}}
+    .suggestions{display:flex;gap:8px;flex-wrap:wrap;margin:5px 0 16px}
+    .suggestions button{border:1px solid var(--line);background:#d5ad6008;color:#cfc3a8;border-radius:99px;padding:8px 12px;font-size:11px;cursor:pointer}
+    .suggestions button:hover{border-color:var(--gold);color:var(--gold2)}
+    .chatform{display:flex;gap:10px;border:1px solid #d5ad6070;background:linear-gradient(135deg,#0c0b09,#11100d);border-radius:16px;padding:9px;box-shadow:0 0 0 3px #d5ad6008,0 12px 30px #0005}
+    .chatform input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:white;padding:13px 14px;font-size:16px}
+    .chatform input::placeholder{color:#918878}.chatform:focus-within{border-color:#e0bd78;box-shadow:0 0 0 3px #d5ad6018,0 12px 30px #0006}
+    .send{border:0;border-radius:11px;padding:0 24px;background:linear-gradient(135deg,#f4dda9,#b98a3b);color:#17130a;font-weight:850;cursor:pointer;box-shadow:0 5px 18px #d5ad6030;transition:transform .2s,filter .2s}.send:hover{transform:translateY(-1px);filter:brightness(1.08)}
+    .send:disabled{opacity:.55;cursor:not-allowed}
+    .hint{text-align:center;color:#706b60;font-size:10px;margin-top:12px}
+    .about{display:grid;grid-template-columns:1fr 1fr;gap:35px;align-items:center}
+    .aboutbox{border:1px solid var(--line);border-radius:20px;padding:30px;background:radial-gradient(circle at 80% 15%,#d5ad6018,transparent 40%),#11100d}
+    .statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}
+    .stat{border-top:1px solid var(--line);padding-top:13px}.stat b{display:block;color:var(--gold2);font-size:22px}.stat span{color:#938d80;font-size:10px}
+    footer{border-top:1px solid var(--line);padding:28px 0;color:#817b70;font-size:11px}
+    .foot{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+    @media(max-width:820px){.wrap{width:min(100% - 30px,620px)}.navin{height:66px}.menu{display:block}.links{display:none;position:absolute;top:66px;left:0;right:0;background:#0d0c09;border-bottom:1px solid var(--line);padding:18px 25px;flex-direction:column;align-items:flex-start;gap:18px}.links.open{display:flex}.navcta{display:none}.hero{grid-template-columns:1fr;text-align:center;padding:65px 0 40px;min-height:0}.hero .lead{margin:auto}.heroactions{justify-content:center}.visual{height:370px;grid-row:1}.core{width:170px;height:170px}.visual:before{width:280px;height:280px}.visual:after{width:330px;height:330px}.orbit{width:250px}.orbit.two{width:290px}.floatlabel.one{left:3%;top:12%}.floatlabel.two{right:2%;bottom:12%}.grid{grid-template-columns:1fr 1fr}.section{padding:68px 0}.about{grid-template-columns:1fr}}
+    @media(max-width:520px){.grid{grid-template-columns:1fr}.visual{height:320px}.visual:before{width:240px;height:240px}.visual:after{width:285px;height:285px}.core{width:145px;height:145px}.orbit{width:210px;height:80px}.orbit.two{width:250px;height:95px}.floatlabel{font-size:9px;padding:8px 10px}.lab{padding:15px 12px;border-radius:18px}.messages{height:54vh;min-height:320px;max-height:560px;gap:14px;padding:9px 3px 18px}.msg{max-width:94%;font-size:15px;line-height:1.75;padding:14px 15px}.chatform{gap:6px;padding:6px}.chatform input{font-size:15px;padding:11px 9px}.send{padding:0 15px}.suggestions{gap:6px}.suggestions button{font-size:10px;padding:7px 10px}.statrow{gap:7px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  </style>
 </head>
 <body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
-  <div class="brand"><div class="brand-mark">N</div><div><div class="brand-name">NEXORA</div><div class="brand-sub">INTELLIGENCE SYSTEM</div></div></div>
-  <div class="side-label">Workspace</div>
-  <nav class="nav">
-    <button class="active" type="button"><span class="nav-icon">⌘</span> AI Conversation</button>
-    <button type="button" id="newChat"><span class="nav-icon">＋</span> New conversation</button>
-    <button type="button" id="focusChat"><span class="nav-icon">◎</span> Focus interface</button>
-  </nav>
-  <div class="side-status"><div class="status-top"><span class="dot"></span> SYSTEM READY</div><div class="status-note">NEXORA core interface is online. Send a message to begin a new session.</div></div>
-</aside>
-<main class="main">
-  <header class="topbar">
-    <div style="display:flex;align-items:center;gap:12px"><button class="mobile-menu" id="menuBtn" aria-label="Open menu">☰</button><div><div class="eyebrow">Personal AI interface</div><div class="top-title">Command Center</div></div></div>
-    <div class="top-right"><span class="pill">NEXORA / CORE</span><span class="pill">● SECURE SESSION</span></div>
+  <header class="nav">
+    <div class="wrap navin">
+      <a class="brand" href="#home"><span class="brandmark">N</span><span>NEXORA <span style="color:var(--gold)">AI</span></span></a>
+      <button class="menu" id="menu" type="button" aria-label="Open menu">☰</button>
+      <nav class="links" id="links"><a href="#home">Home</a><a href="#features">Features</a><a href="#lab">AI Studio</a><a href="#about">About</a></nav>
+      <a class="navcta" href="#lab">Try NEXORA&nbsp; ↗</a>
+    </div>
   </header>
-  <section class="workspace">
-    <section class="chat-panel" id="chatPanel">
-      <div class="chat-head"><div><div class="chat-heading">AI CONVERSATION</div><div class="chat-caption">A clearer space for deeper answers</div></div><div class="connection"><span class="dot"></span> ONLINE</div></div>
-      <div class="chat-scroll" id="chatScroll" aria-live="polite">
-        <div class="welcome" id="welcome">
-          <div class="orb-wrap"><div class="orbit"></div><div class="orbit two"></div><div class="orb"></div></div>
-          <h1>HELLO, I'M <span>NEXORA</span></h1>
-          <p>Your intelligent assistant is ready. Ask a question, explore an idea, or start with one of the prompts below.</p>
-          <div class="suggestions">
-            <button type="button" data-prompt="Explain a complex topic in simple words.">Explain a topic</button>
-            <button type="button" data-prompt="Help me plan my day productively.">Plan my day</button>
-            <button type="button" data-prompt="Give me creative ideas for a new project.">Generate ideas</button>
-          </div>
-        </div>
+
+  <main>
+    <section class="wrap hero" id="home">
+      <div>
+        <div class="eyebrow"><span class="pulse"></span> THE NEXT WAVE OF INTELLIGENCE</div>
+        <h1>Think beyond.<br><span>Go NEXORA.</span></h1>
+        <p class="lead">A smarter space for questions, ideas and creativity. Explore what’s possible when powerful AI meets a beautifully simple experience.</p>
+        <div class="heroactions"><a class="btn" href="#lab">Start a conversation <span>↗</span></a><a class="btn secondary" href="#features">Explore features</a></div>
+        <div class="micro">CURIOUS MINDS. BOLDER IDEAS. ONE INTELLIGENT SPACE.</div>
       </div>
-      <div class="composer-wrap">
-        <form class="composer" id="chatForm">
-          <textarea id="prompt" rows="1" placeholder="Ask NEXORA anything..." aria-label="Message NEXORA"></textarea>
-          <button class="send" id="sendBtn" type="submit" aria-label="Send message">➤</button>
-        </form>
-        <div class="composer-note">ENTER TO SEND · SHIFT + ENTER FOR NEW LINE</div>
+      <div class="visual" aria-label="Animated golden AI core">
+        <div class="orbit"></div><div class="orbit two"></div><div class="core"></div>
+        <span class="spark a"></span><span class="spark b"></span>
+        <div class="floatlabel one">✦&nbsp; INTELLIGENCE CORE</div><div class="floatlabel two">●&nbsp; SYSTEM ONLINE</div>
       </div>
     </section>
-    <aside class="right-rail">
-      <div class="hud-card"><div class="card-label">Live visualization</div><h3>Neural activity</h3><p>A visual system indicator for your NEXORA workspace.</p><div class="mini-radar"><div class="radar-circle"></div><div class="radar-center"></div></div></div>
-      <div class="hud-card"><div class="card-label">System status</div><h3>Core diagnostics</h3><div class="metric"><span>Interface</span><strong>READY</strong></div><div class="metric"><span>Conversation</span><strong>ACTIVE</strong></div><div class="metric"><span>Connection</span><strong>SECURE</strong></div><div class="metric"><span>Mode</span><strong>ASSISTANT</strong></div></div>
-      <div class="hud-card"><div class="card-label">Designed for clarity</div><h3>More room. Better focus.</h3><p>Expanded conversation space, readable typography, and responsive controls keep long answers comfortable to read on desktop and mobile.</p></div>
-    </aside>
-  </section>
-  <footer class="footer">NEXORA AI · INTELLIGENCE, REFINED</footer>
-</main>
-</div>
-<script>
-const form=document.getElementById('chatForm');
-const promptBox=document.getElementById('prompt');
-const sendBtn=document.getElementById('sendBtn');
-const chatScroll=document.getElementById('chatScroll');
-const welcome=document.getElementById('welcome');
-const history=[];
-let busy=false;
 
-function addMessage(role,text,isError=false){
-  if(welcome) welcome.remove();
-  const wrap=document.createElement('div');
-  wrap.className='message '+(role==='user'?'user':'assistant');
-  const meta=document.createElement('div');
-  meta.className='msg-meta';
-  meta.textContent=role==='user'?'YOU':'NEXORA AI';
-  const bubble=document.createElement('div');
-  bubble.className='bubble'+(isError?' error':'');
-  bubble.textContent=text;
-  wrap.append(meta,bubble);
-  chatScroll.appendChild(wrap);
-  chatScroll.scrollTop=chatScroll.scrollHeight;
-  return wrap;
-}
-function setBusy(value){
-  busy=value;
-  sendBtn.disabled=value;
-  sendBtn.textContent=value?'…':'➤';
-}
-async function sendMessage(text){
-  const clean=text.trim();
-  if(!clean||busy)return;
-  addMessage('user',clean);
-  history.push({role:'user',text:clean});
-  promptBox.value='';
-  promptBox.style.height='auto';
-  setBusy(true);
-  const typing=document.createElement('div');
-  typing.className='typing';
-  typing.textContent='NEXORA IS THINKING…';
-  chatScroll.appendChild(typing);
-  chatScroll.scrollTop=chatScroll.scrollHeight;
-  try{
-    const response=await fetch('/api/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:history})
-    });
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok) throw new Error(data.message||'AI service returned an error ('+response.status+').');
-    if(!data.reply) throw new Error('The AI returned an empty response. Please try again.');
-    history.push({role:'assistant',text:data.reply});
-    addMessage('assistant',data.reply);
-  }catch(error){
-    addMessage('assistant',error.message||'Could not reach the AI service. Check your connection and try again.',true);
-  }finally{
-    typing.remove();
-    setBusy(false);
-    promptBox.focus();
-  }
-}
-form.addEventListener('submit',event=>{event.preventDefault();sendMessage(promptBox.value);});
-promptBox.addEventListener('input',()=>{promptBox.style.height='auto';promptBox.style.height=Math.min(promptBox.scrollHeight,180)+'px';});
-promptBox.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();form.requestSubmit();}});
-document.querySelectorAll('[data-prompt]').forEach(button=>button.addEventListener('click',()=>sendMessage(button.dataset.prompt)));
-document.getElementById('newChat').addEventListener('click',()=>{history.length=0;chatScroll.innerHTML='';chatScroll.appendChild(welcomeTemplate());document.getElementById('sidebar').classList.remove('open');});
-function welcomeTemplate(){
-  const node=document.createElement('div');node.className='welcome';node.innerHTML='<div class="orb-wrap"><div class="orbit"></div><div class="orbit two"></div><div class="orb"></div></div><h1>HELLO, I\\'M <span>NEXORA</span></h1><p>Your intelligent assistant is ready. Ask a question, explore an idea, or start with one of the prompts below.</p><div class="suggestions"><button type="button" data-prompt="Explain a complex topic in simple words.">Explain a topic</button><button type="button" data-prompt="Help me plan my day productively.">Plan my day</button><button type="button" data-prompt="Give me creative ideas for a new project.">Generate ideas</button></div>';
-  node.querySelectorAll('[data-prompt]').forEach(button=>button.addEventListener('click',()=>sendMessage(button.dataset.prompt)));
-  return node;
-}
-document.getElementById('focusChat').addEventListener('click',()=>{document.getElementById('chatPanel').scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('sidebar').classList.remove('open');promptBox.focus();});
-document.getElementById('menuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('open'));
-</script>
-</body>
-                           </html>
-            
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="sectionhead"><div class="kicker">What makes us different</div><h2>One space. Endless possibilities.</h2><p class="sub">From understanding complex topics to turning a fresh idea into a plan, NEXORA is built to help you move forward.</p></div>
+        <div class="grid">
+          <article class="card"><div class="ico">✧</div><h3>AI Intelligence</h3><p>Ask questions, explore concepts and get clear explanations in a conversational way.</p></article>
+          <article class="card"><div class="ico">⌘</div><h3>Creative Thinking</h3><p>Shape ideas, brainstorm possibilities and find new directions for your next project.</p></article>
+          <article class="card"><div class="ico">◉</div><h3>Smart Conversations</h3><p>Keep the thread of a conversation and build on what you have already discussed.</p></article>
+          <article class="card"><div class="ico">⟡</div><h3>Simple Experience</h3><p>A clean, focused interface that keeps the important thing — your ideas — front and centre.</p></article>
+          <article class="card"><div class="ico">⌁</div><h3>Learn & Explore</h3><p>Break down unfamiliar topics into manageable explanations and useful next steps.</p></article>
+          <article class="card"><div class="ico">✺</div><h3>Built for What's Next</h3><p>A growing AI experience designed to make everyday digital work feel more approachable.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lab">
+      <div class="wrap">
+        <div class="sectionhead"><div class="kicker">NEXORA AI Studio</div><h2>Your ideas start here.</h2><p class="sub">Ask anything. Learn something new. Start a conversation with NEXORA.</p></div>
+        <div class="lab">
+          <div class="labtop"><div class="labname"><span class="brandmark">N</span> NEXORA ASSISTANT</div><div class="status">Ready to chat</div></div>
+          <div class="messages" id="messages" aria-live="polite"><div class="msg ai">Hello! I’m NEXORA. What would you like to explore today?</div></div>
+          <div class="suggestions" id="suggestions">
+            <button type="button" data-prompt="Explain black holes in simple words">Explain black holes</button>
+            <button type="button" data-prompt="Give me ideas for a creative project">Creative ideas</button>
+            <button type="button" data-prompt="Help me make a simple study plan">Make a study plan</button>
+          </div>
+          <form class="chatform" id="chatForm">
+            <input id="chatInput" type="text" autocomplete="off" maxlength="4000" placeholder="Message NEXORA..." aria-label="Your message">
+            <button class="send" id="sendButton" type="submit">Send&nbsp; ↗</button>
+          </form>
+          <div class="hint">NEXORA can make mistakes. Check important information.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="wrap about">
+        <div><div class="kicker">A new way to explore</div><h2>Technology should feel inspiring.</h2><p class="sub">NEXORA AI brings a focused interface and conversational AI together in one place. Whether you’re learning, planning or simply curious, there’s room to explore.</p><a class="btn" href="#lab" style="margin-top:18px">Meet your AI assistant ↗</a></div>
+        <div class="aboutbox"><div class="eyebrow"><span class="pulse"></span> NEXORA EXPERIENCE</div><h3 style="font-size:25px;margin:22px 0 8px">Curiosity is your superpower.</h3><p class="sub">Start with one question. Follow it somewhere unexpected.</p><div class="statrow"><div class="stat"><b>01</b><span>ASK</span></div><div class="stat"><b>02</b><span>EXPLORE</span></div><div class="stat"><b>03</b><span>CREATE</span></div></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap foot"><span>© <span id="year"></span> NEXORA AI. All rights reserved.</span><span>Built for curious minds&nbsp; ✦</span></div></footer>
+
+  <script>
+    (() => {
+      const $ = (selector) => document.querySelector(selector);
+      const form = $('#chatForm');
+      const input = $('#chatInput');
+      const send = $('#sendButton');
+      const messagesEl = $('#messages');
+      const suggestions = $('#suggestions');
+      const menu = $('#menu');
+      const links = $('#links');
+      let history = [];
+      let busy = false;
+
+      $('#year').textContent = new Date().getFullYear();
+
+      menu.addEventListener('click', () => links.classList.toggle('open'));
+      links.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => links.classList.remove('open'));
+      });
+
+      function addMessage(text, role, isError = false) {
+        const node = document.createElement('div');
+        node.className = `msg ${role}${isError ? ' error' : ''}`;
+        node.textContent = text;
+        messagesEl.appendChild(node);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return node;
+      }
+
+      function showTyping() {
+        const node = document.createElement('div');
+        node.className = 'msg ai';
+        node.innerHTML = '<span class="dots" aria-label="NEXORA is thinking"><i></i><i></i><i></i></span>';
+        messagesEl.appendChild(node);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return node;
+      }
+
+      async function sendMessage(raw) {
+        const text = raw.trim();
+        if (!text || busy) return;
+
+        busy = true;
+        send.disabled = true;
+        input.disabled = true;
+        addMessage(text, 'user');
+        input.value = '';
+        const typing = showTyping();
+
+        try {
+          const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages: [...history, { role: 'user', text }] })
+          });
+
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) {
+            throw new Error(data.message || `Server error (${response.status}). Please try again.`);
+          }
+          if (!data.reply || typeof data.reply !== 'string') {
+            throw new Error('The AI server returned an empty reply. Please try again.');
+          }
+
+          typing.remove();
+          addMessage(data.reply, 'ai');
+          history.push({ role: 'user', text }, { role: 'assistant', text: data.reply });
+        } catch (error) {
+          typing.remove();
+          addMessage(error.message || 'Could not reach NEXORA. Please try again.', 'ai', true);
+        } finally {
+          busy = false;
+          se
