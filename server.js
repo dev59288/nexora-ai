@@ -1,89 +1,311 @@
-// NEXORA AI backend — no npm packages needed (Node 18+). The API key stays here, never in the browser.
-const http = require('http'), fs = require('fs'), path = require('path');
-try { // tiny .env loader
-  for (const l of fs.readFileSync(path.join(__dirname, '.env'), 'utf8').split(/\r?\n/)) {
-    const m = l.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/);
-    if (m && !(m[1] in process.env)) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
+// NEXORA AI - Optimized Backend
+// Requires Node.js 18 or newer
+
+'use strict';
+
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
+// Load .env file if available
+try {
+  const envFile = fs.readFileSync('.env', 'utf8');
+
+  for (const line of envFile.split(/\r?\n/)) {
+    const trimmed = line.trim();
+
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const index = trimmed.indexOf('=');
+    if (index === -1) continue;
+
+    const key = trimmed.slice(0, index).trim();
+    const value = trimmed.slice(index + 1).trim();
+
+    if (key && !process.env[key]) {
+      process.env[key] = value.replace(/^["']|["']$/g, '');
+    }
   }
-} catch {}
-const KEY = process.env.GEMINI_API_KEY;
+} catch (_) {}
+
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+const API_KEY = process.env.GEMINI_API_KEY;
 const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest';
-const PORT = +process.env.PORT || 3000, HOST = process.env.HOST || '127.0.0.1';
-const PER_MIN = +process.env.RATE_PER_MIN || 10;   // per visitor
-const DAILY = +process.env.DAILY_LIMIT || 300;     // total per day, protects your free quota
-const SYS = `You are NEXORA, a helpful, accurate assistant. Reply in the language the user writes in: English, Hindi (Devanagari) or Hinglish (Hindi in Latin letters) — match their script. Be clear and concise, use short paragraphs and light markdown only. If you are unsure, say so instead of inventing facts. For medical, legal or financial questions give general information and suggest a qualified professional.`;
-const MSG = {
-  rate: 'NEXORA has reached the free usage limit for now. Please wait a minute and try again. If it keeps happening, today’s free quota may be used up and it will reset tomorrow.',
-  daily: 'NEXORA’s daily free limit has been reached. Please come back tomorrow.',
-  busy: 'The AI service is busy right now. Please try again in a few seconds.',
-  config: 'NEXORA isn’t set up correctly yet. The site owner needs to check the API key and model name.',
-  net: 'Couldn’t reach the AI service. Check your connection and try again.',
-  blocked: 'I can’t help with that request. Try rephrasing it.',
-  slow: 'You’re sending messages quickly. Please wait a few seconds.',
-  bad: 'That message couldn’t be read. Please try again.'
-};
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-const hits = new Map(); let day = '', count = 0;
-function limited(ip) {
-  const now = Date.now(), a = (hits.get(ip) || []).filter(t => now - t < 60000);
-  a.push(now); hits.set(ip, a);
-  if (hits.size > 5000) hits.clear();
-  return a.length > PER_MIN;
+
+const PUBLIC_DIR = path.join(__dirname, 'public');
+
+const MAX_BODY_SIZE = 1024 * 1024;
+const MAX_MESSAGES = 30;
+
+function send(res, status, data) {
+  if (res.writableEnded) return;
+
+  res.writeHead(status, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Cache-Control': 'no-store'
+  });
+
+  res.end(JSON.stringify(data));
 }
-function dailyUsed() {
-  const d = new Date().toISOString().slice(0, 10);
-  if (d !== day) { day = d; count = 0; }
-  return ++count > DAILY;
+
+function getMimeType(file) {
+  const ext = path.extname(file).toLowerCase();
+
+  const types = {
+    '.html': 'text/html; charset=utf-8',
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+    '.json': 'application/json; charset=utf-8',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2'
+  };
+
+  return types[ext] || 'application/octet-stream';
 }
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    let size = 0;
+
+    req.on('data', chunk => {
+      size += chunk.length;
+
+      if (size > MAX_BODY_SIZE) {
+        reject(new Error('Request too large'));
+        req.destroy();
+        return;
+      }
+
+      body += chunk.toString('utf8');
+    });
+
+    req.on('end', () => resolve(body));
+    req.on('error', reject);
+  });
+}// Gemini AI connection with timeout and retry
+
 async function gemini(contents) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(MODEL)}:generateContent`;
-  for (let a = 0; a < 2; a++) {
-    let r;
+  if (!API_KEY) {
+    return {
+      ok: false,
+      status: 500,
+      message: 'AI service is not configured.'
+    };
+  }
+
+  const url =
+    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+
+  const payload = {
+    contents,
+    generationConfig: {
+      temperature: 0.7,
+      topP: 0.95,
+      maxOutputTokens: 2048
+    }
+  };
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 60000);
+
     try {
-      r = await fetch(url, {
+      const response = await fetch(url, {
         method: 'POST',
-        headers: { 'content-type': 'application/json', 'x-goog-api-key': KEY },
-        body: JSON.stringify({ systemInstruction: { parts: [{ text: SYS }] }, contents, generationConfig: { maxOutputTokens: 1024, temperature: 0.7 } }),
-        signal: AbortSignal.timeout(30000)
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
       });
-    } catch { if (a === 0) { await sleep(1500); continue; } return { net: true }; }
-    if ((r.status === 500 || r.status === 503) && a === 0) { await sleep(1500); continue; }
-    return { status: r.status, j: await r.json().catch(() => ({})) };
+
+      clearTimeout(timeout);
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.ok) {
+        const reply =
+          data.candidates?.[0]?.content?.parts
+            ?.map(part => part.text || '')
+            .join('')
+            .trim();
+
+        if (reply) return { ok: true, reply };
+
+        return {
+          ok: false,
+          status: 502,
+          message: 'AI returned an empty response.'
+        };
+      }
+
+      console.error('[Gemini] API error:', response.status, data);
+
+      if (
+        attempt === 0 &&
+        (response.status === 429 ||
+         response.status === 500 ||
+         response.status === 503)
+      ) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+
+      return {
+        ok: false,
+        status: response.status,
+        message: data.error?.message || 'Gemini API request failed.'
+      };
+
+    } catch (error) {
+      clearTimeout(timeout);
+
+      console.error('[Gemini] Connection error:', error.message);
+
+      if (attempt === 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        continue;
+      }
+
+      return {
+        ok: false,
+        status: 502,
+        message: 'Could not connect to the AI service.'
+      };
+    }
   }
-}
-function send(res, code, obj) { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(obj)); }
+}// Chat API
+
 async function chat(req, res) {
-  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-  if (!KEY) return send(res, 500, { message: MSG.config });
-  if (limited(ip)) return send(res, 429, { message: MSG.slow });
-  let body = '';
-  for await (const c of req) { body += c; if (body.length > 100000) return send(res, 413, { message: MSG.bad }); }
-  let msgs;
-  try { msgs = JSON.parse(body).messages; } catch {}
-  if (!Array.isArray(msgs) || !msgs.length || msgs[msgs.length - 1].role !== 'user') return send(res, 400, { message: MSG.bad });
-  const contents = msgs.slice(-20).map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: String(m.text || '').slice(0, 4000) }] }));
-  if (dailyUsed()) return send(res, 429, { message: MSG.daily });
-  const out = await gemini(contents);
-  if (out.net) return send(res, 502, { message: MSG.net });
-  const { status, j } = out;
-  if (status === 200) {
-    const text = (j.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
-    return text ? send(res, 200, { reply: text }) : send(res, 200, { reply: MSG.blocked });
-  }
-  console.error('Gemini error', status, JSON.stringify(j.error || j).slice(0, 300)); // owner-only log; never sent to browser
-  if (status === 429) return send(res, 429, { message: MSG.rate });
-  if (status === 500 || status === 503) return send(res, 503, { message: MSG.busy });
-  return send(res, 500, { message: MSG.config }); // 400/403/404: bad key, no access or wrong model name
-}
-const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png' };
-http.createServer(async (req, res) => {
   try {
-    if (req.method === 'POST' && req.url === '/api/chat') return await chat(req, res);
-    if (req.url === '/api/health') return send(res, 200, { ok: true, configured: !!KEY });
-    const rel = req.url.split('?')[0] === '/' ? 'index.html' : decodeURIComponent(req.url.split('?')[0]);
-    const file = path.join(__dirname, 'public', path.normalize(rel).replace(/^(\.\.[\/\\])+/, ''));
-    if (!file.startsWith(path.join(__dirname, 'public'))) { res.writeHead(403); return res.end(); }
-    res.writeHead(200, { 'content-type': TYPES[path.extname(file)] || 'application/octet-stream' });
-    fs.createReadStream(file).on('error', () => { if (!res.headersSent) res.writeHead(404); res.end('Not found'); }).pipe(res);
-  } catch (e) { console.error(e); if (!res.headersSent) send(res, 500, { message: MSG.busy }); }
-}).listen(PORT, HOST, () => console.log(`NEXORA AI running: http://localhost:${PORT}  (model: ${MODEL}, key ${KEY ? 'found' : 'MISSING'})`));
+    console.log('[Chat] Request received');
+
+    const body = await readBody(req);
+    const parsed = JSON.parse(body);
+
+    if (!Array.isArray(parsed.messages) || parsed.messages.length === 0) {
+      return send(res, 400, {
+        message: 'Please send a valid message.'
+      });
+    }
+
+    const messages = parsed.messages.slice(-MAX_MESSAGES);
+
+    const contents = messages.map(message => ({
+      role: message.role === 'assistant' || message.role === 'model'
+        ? 'model'
+        : 'user',
+      parts: [{
+        text: String(message.text || '').slice(0, 12000)
+      }]
+    })).filter(message => message.parts[0].text.trim());
+
+    if (!contents.length || contents[contents.length - 1].role !== 'user') {
+      return send(res, 400, {
+        message: 'Please send a user message.'
+      });
+    }
+
+    const result = await gemini(contents);
+
+    if (!result.ok) {
+      return send(res, result.status || 502, {
+        message: result.message
+      });
+    }
+
+    return send(res, 200, {
+      reply: result.reply
+    });
+
+  } catch (error) {
+    console.error('[Chat] Error:', error);
+
+    return send(res, 500, {
+      message: 'Something went wrong. Please try again.'
+    });
+  }
+}
+
+// Static website files
+
+async function serveStatic(req, res) {
+  let requestedPath;
+
+  try {
+    requestedPath = decodeURIComponent(
+      new URL(req.url, 'http://localhost').pathname
+    );
+  } catch (_) {
+    return send(res, 400, { message: 'Invalid URL.' });
+  }
+
+  if (requestedPath === '/') requestedPath = '/index.html';
+
+  const filePath = path.resolve(PUBLIC_DIR, '.' + requestedPath);
+
+  if (!filePath.startsWith(PUBLIC_DIR + path.sep)) {
+    return send(res, 403, { message: 'Access denied.' });
+  }
+
+  try {
+    const data = await fs.promises.readFile(filePath);
+
+    res.writeHead(200, {
+      'Content-Type': getMimeType(filePath),
+      'Cache-Control': 'no-cache'
+    });
+
+    res.end(data);
+  } catch (_) {
+    send(res, 404, { message: 'File not found.' });
+  }
+}
+
+// Main server
+
+const server = http.createServer(async (req, res) => {
+  console.log(`[HTTP] ${req.method} ${req.url}`);
+
+  if (req.method === 'GET' && req.url === '/api/health') {
+    return send(res, 200, {
+      ok: true,
+      configured: Boolean(API_KEY),
+      model: MODEL
+    });
+  }
+
+  if (req.method === 'POST' && req.url === '/api/chat') {
+    return chat(req, res);
+  }
+
+  if (req.method === 'GET' || req.method === 'HEAD') {
+    return serveStatic(req, res);
+  }
+
+  return send(res, 405, {
+    message: 'Method not allowed.'
+  });
+});
+
+server.listen(PORT, HOST, () => {
+  console.log('================================');
+  console.log('       NEXORA AI ONLINE');
+  console.log('================================');
+  console.log(`Port: ${PORT}`);
+  console.log(`Model: ${MODEL}`);
+  console.log(`API key: ${API_KEY ? 'Configured' : 'MISSING'}`);
+  console.log('Server ready.');
+});
+
+server.on('error', error => {
+  console.error('[Server] Fatal error:', error);
+});
